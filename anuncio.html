@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienes Raíces</title>
+    <link rel="stylesheet" href="build/css/app.css">
+</head>
+<body>
+    
+    <header class="header">
+        <div class="contenedor contenido-header">
+            <div class="barra">
+                <a href="/">
+                    <img src="build/img/logo.svg" alt="Logotipo de bienes raíces">
+                </a>
+
+                <nav class="navegacion">
+                    <a href="nosotros.html">Nosotros</a>
+                    <a href="anuncios.html">Anuncios</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="contacto.html">Contacto</a>
+                </nav>
+            </div> <!-- .barra-->
+
+        </div>
+    </header>
+
+    <main class="contenedor seccion contenido-centrado">
+        <h1>Casa en venta frente al bosque</h1>
+
+        <picture>
+            <source srcset="build/img/destacada.webp" type="image/webp">
+            <source srcset="build/img/destacada.jpg" type="image/jpeg">
+            <img loading="lazy" src="build/img/destacada.jpg" alt="Imagen de la propiedad">
+        </picture>
+
+        <div class="resumen-propiedad">
+            <p class="precio">$3,000,000</p>
+            <ul class="iconos-caracteristicas">
+                <li>
+                    <img loading="lazy" src="build/img/icono_wc.svg" alt="Icono wc">
+                    <p>3</p>
+                </li>
+                <li>
+                    <img loading="lazy" src="build/img/icono_estacionamiento.svg" alt="Icono estacionamiento">
+                    <p>3</p>
+                </li>
+                <li>
+                    <img loading="lazy" src="build/img/icono_dormitorio.svg" alt="Icono habitaciones">
+                    <p>4</p>
+                </li>
+            </ul>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin porttitor, enim vel sollicitudin rutrum, mi velit tempus urna, eu porttitor tellus nisi sed nibh. Cras a magna eget augue consequat porta. Phasellus a tristique nisl, scelerisque luctus neque. Fusce dapibus vulputate nibh, pharetra aliquam enim dignissim in. Integer a dui et urna accumsan varius. Mauris urna est, pulvinar vel libero non, auctor aliquet eros. Pellentesque massa est, molestie eget tellus sed, rhoncus luctus metus.
+            </p>
+            <p>
+                Fusce a mauris quis purus gravida volutpat lacinia eget erat. Nullam suscipit lacus eget est suscipit, non porttitor purus aliquam. Proin sed turpis cursus, malesuada diam commodo, viverra arcu. Vivamus luctus malesuada volutpat. Pellentesque vitae aliquam mi, vel mattis tortor. Nam iaculis malesuada dolor, nec varius metus ultricies eget. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
+            </p>
+        </div>
+    </main>
+
+    <footer class="footer seccion">
+        <div class="contendor contenedor-footer">
+            <nav class="navegacion">
+                <a href="nosotros.html">Nosotros</a>
+                <a href="anuncios.html">Anuncios</a>
+                <a href="blog.html">Blog</a>
+                <a href="contacto.html">Contacto</a>
+            </nav>
+        </div>
+
+        <p class="copyright">Todos los derechos reservados 2022 &copy;</p>
+    </footer>
+
+    <script src="build/js/bundle.min.js"></script>
+</body>
+</html>
