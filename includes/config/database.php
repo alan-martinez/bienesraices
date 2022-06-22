@@ -1,11 +1,12 @@
 <?php 
 
-function conertarDB(){
-    $db = mysqli_connect('localhost', 'root', 'root', 'bienes_raices');
+function conertarDB() : mysqli{
+    $db =  mysqli_connect ('localhost', 'root', 'root', 'bienes_raices');
 
-    if($db){
-        echo 'Se conecto';
-    }else{
-        echo 'No conecto';
+    if(!$db){
+        echo 'Error no se pudo conertar';
+        exit;
     }
+
+    return $db;
 }
