@@ -9,7 +9,7 @@
 </head>
 <body>
     
-    <header class="header">
+    <header class="header <?php echo $inicio ? 'inicio' : '' ?>">
         <div class="contenedor contenido-header">
             <div class="barra">
                 <a href="/">
@@ -23,34 +23,13 @@
                 <div class="derecha">
                     <img class="dark-mode-boton" src="build/img/dark-mode.svg" alt="Icono dark mode">
                     <nav class="navegacion">
-                        <a href="nosotros.html">Nosotros</a>
-                        <a href="anuncios.html">Anuncios</a>
-                        <a href="blog.html">Blog</a>
-                        <a href="contacto.html">Contacto</a>
+                        <a href="nosotros.php">Nosotros</a>
+                        <a href="anuncios.php">Anuncios</a>
+                        <a href="blog.php">Blog</a>
+                        <a href="contacto.php">Contacto</a>
                     </nav>
                 </div>
             </div> <!-- .barra-->
 
         </div>
     </header>
-
-    <main class="contenedor seccion">
-        <h1>Título Pagína</h1>
-    </main>
-
-    <footer class="footer seccion">
-        <div class="contendor contenedor-footer">
-            <nav class="navegacion">
-                <a href="nosotros.html">Nosotros</a>
-                <a href="anuncios.html">Anuncios</a>
-                <a href="blog.html">Blog</a>
-                <a href="contacto.html">Contacto</a>
-            </nav>
-        </div>
-
-        <p class="copyright">Todos los derechos reservados 2022 &copy;</p>
-    </footer>
-
-    <script src="build/js/bundle.min.js"></script>
-</body>
-</html>
