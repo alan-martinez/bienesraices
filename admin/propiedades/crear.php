@@ -5,6 +5,10 @@
 
     $db = conertarDB();
 
+    //Consultar para obtener los vendedores 
+    $consulta = "SELECT * FROM vendedores";
+    $resultado = mysqli_query($db, $consulta);
+
     //Arreglo con mensajes de error 
     $errores = [];
     $titulo = '';
@@ -20,15 +24,34 @@
         // echo '<pre>';
         // var_dump($_POST);
         // echo '</pre>';
+
+        // echo '<pre>';
+        // var_dump($_FILES);
+        // echo '</pre>';
+
+
+        //Sanitizar valores
+        // $numero1 = '1HOLA';
+        // $numero2 = 'SISI';
+
+        // $resultado = filter_var($numero1, FILTER_SANITIZE_STRING);
+        // $resultado = filter_var($numero2, FILTER_VALIDATE_INT );
+        // var_dump($resultado);
+        // exit;
+
         
-        $titulo = $_POST['titulo'];
-        $precio = $_POST['precio'];
-        $descripcion = $_POST['descripcion'];
-        $habitaciones = $_POST['habitaciones'];
-        $wc = $_POST['wc'];
-        $estacionamiento = $_POST['estacionamiento'];
-        $vendedorId = $_POST['vendedor'];
-        
+        $titulo =mysqli_real_escape_string( $db, $_POST['titulo']);
+        $precio =mysqli_real_escape_string( $db, $_POST['precio']);
+        $descripcion =mysqli_real_escape_string( $db, $_POST['descripcion']);
+        $habitaciones =mysqli_real_escape_string( $db, $_POST['habitaciones']);
+        $wc =mysqli_real_escape_string( $db, $_POST['wc']);
+        $estacionamiento =mysqli_real_escape_string( $db, $_POST['estacionamiento']);
+        $creado = date('Y/m/d');
+        $vendedorId =mysqli_real_escape_string( $db, $_POST['vendedor']);
+
+        //Asignar files a una variable
+        $imagen = $_FILES['imagen'];
+
         if (!$titulo){
             $errores[] = 'El titulo no puede ir vacio';
         }
@@ -50,6 +73,16 @@
         if (!$vendedorId){
             $errores[] = 'Elige un vendedor';
         }
+        if(!$imagen['name'] || $imagen['error']){
+            $errores[] = 'La imagen es obligatoria';
+        }
+
+        //Validar por tamaño (1MB maximo)
+        $medida = 1000 * 1000;
+
+        if ($imagen['size'] > $medida){
+            $errores[] = 'La imagen es muy pesada';
+        }
         
         // echo '<pre>';
         // var_dump($errores);
@@ -57,16 +90,33 @@
 
         //Revisar que el arreglo de errores este vacio 
         if (empty($errores)) {
+            /**Subida de archivos */
+
+            //Carpeta imagenes
+            $carpetaImagenes = '../../imagenes/';
+            if(!is_dir($carpetaImagenes)){
+                mkdir($carpetaImagenes);
+            }
+
+            //Generar un nombre unico
+            $nombreImagen = md5( uniqid( rand(), true)) . '.jpg';
+
+            //Subir la imagen
+            move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . $nombreImagen);
+
+
             //Insertar en la base de datos
-            $query = "INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, vendedorId) 
-                    VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc' , '$estacionamiento',  '$vendedorId');
-            ";
+            $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) 
+                    VALUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc' , '$estacionamiento', '$creado', '$vendedorId') ";
     
             // echo $query;
+
     
             $resultado = mysqli_query($db, $query);
+
             if($resultado){
-                echo 'Insertado correctamente';
+                //Redireccionar al usuario
+                header("Location: /admin?resultado=1");
             }
         }
 
@@ -88,7 +138,7 @@
             </div>
         <?php endforeach; ?>
 
-        <form class="formulario" method="POST" action='/admin/propiedades/crear.php'>
+        <form class="formulario" method="POST" action='/admin/propiedades/crear.php' enctype="multipart/form-data">
             <fieldset>
                 <legend>Información General</legend>
 
@@ -99,7 +149,7 @@
                 <input type="number" id="precio" name="precio" placeholder="Precio propiedad" value= "<?php echo $precio; ?>">
 
                 <label for="imagen">Imagen:</label>
-                <input type="file" id="imagen" accept="image/jpeg, image/png">
+                <input type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
 
                 <label for="descripcion">Descripcion:</label>
                 <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
@@ -123,8 +173,13 @@
 
                 <select name="vendedor" id="vendedor">
                     <option value="">--Seleccione--</option>
-                    <option value="1">Alan</option>
-                    <option value="2">Karen</option>
+                    <?php while ($vendedor = mysqli_fetch_assoc($resultado) ): ?>
+                    
+                        <option <?php echo $vendedorId === $vendedor['id'] ? 'selected' : ''; ?>
+                        value="<?php echo $vendedor['id']; ?>">
+                        <?php echo $vendedor['nombre'] . " " . $vendedor['apellido']; ?> </option>
+
+                    <?php endwhile; ?>
                 </select>
             </fieldset>
 
