@@ -1,4 +1,9 @@
 <?php 
+    require '../../includes/funciones.php';
+    $auth = estaAutenticado();
+    if (!$auth){
+        header('Location: /');
+    }
 
     //Validar el URL por ID valido
     $id = $_GET['id'];
@@ -11,7 +16,16 @@
     //Base de datos
     require '../../includes/config/database.php';
 
-    $db = conertarDB();
+    $db = conectarDB();
+
+    //Consulta para los datos de propiedad;
+    $consulta = "SELECT * FROM propiedades WHERE id = ${id}";
+    $resultado = mysqli_query($db, $consulta);
+    $propiedad = mysqli_fetch_assoc($resultado);
+
+    // echo "<pre>";
+    // var_dump($propiedad);
+    // echo "</pre>";
 
     //Consultar para obtener los vendedores 
     $consulta = "SELECT * FROM vendedores";
@@ -19,20 +33,21 @@
 
     //Arreglo con mensajes de error 
     $errores = [];
-    $titulo = '';
-    $precio = '';
-    $descripcion = '';
-    $habitaciones = '';
-    $wc = '';
-    $estacionamiento ='';
-    $vendedorId = '';
+
+    $titulo = $propiedad['titulo'];
+    $precio = $propiedad['precio'];
+    $descripcion = $propiedad['descripcion'];
+    $habitaciones = $propiedad['habitaciones'];
+    $wc = $propiedad['wc'];
+    $estacionamiento = $propiedad['estacionamiento'];
+    $vendedorId = $propiedad['vendedorId'];
+    $imagenPropiedad = $propiedad['imagen'];
 
     //Ejecutar el formulario despues de que el usuario lo envie
     if ($_SERVER['REQUEST_METHOD'] === 'POST'){
-        // echo '<pre>';
-        // var_dump($_POST);
-        // echo '</pre>';
-
+        echo '<pre>';
+        var_dump($_POST);
+        echo '</pre>';
         // echo '<pre>';
         // var_dump($_FILES);
         // echo '</pre>';
@@ -81,10 +96,7 @@
         if (!$vendedorId){
             $errores[] = 'Elige un vendedor';
         }
-        if(!$imagen['name'] || $imagen['error']){
-            $errores[] = 'La imagen es obligatoria';
-        }
-
+       
         //Validar por tamaño (1MB maximo)
         $medida = 1000 * 1000;
 
@@ -99,39 +111,45 @@
         //Revisar que el arreglo de errores este vacio 
         if (empty($errores)) {
             /**Subida de archivos */
-
             //Carpeta imagenes
             $carpetaImagenes = '../../imagenes/';
             if(!is_dir($carpetaImagenes)){
                 mkdir($carpetaImagenes);
             }
 
-            //Generar un nombre unico
-            $nombreImagen = md5( uniqid( rand(), true)) . '.jpg';
+            $nombreImagen = '';
 
-            //Subir la imagen
-            move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . $nombreImagen);
-
+            if($imagen['name']){
+                //Eliminar la nueva imagen
+                unlink($carpetaImagenes. $propiedad['imagen']);
+                //Generar un nombre unico
+                $nombreImagen = md5( uniqid( rand(), true)) . '.jpg';
+    
+                //Subir la imagen
+                move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . $nombreImagen);
+            }else{
+                $nombreImagen = $propiedad['imagen'];
+            }
 
             //Insertar en la base de datos
-            $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) 
-                    VALUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc' , '$estacionamiento', '$creado', '$vendedorId') ";
+            $query = " UPDATE propiedades SET titulo = '${titulo}', precio = '${precio}', imagen = '${nombreImagen}', descripcion = '${descripcion}',
+                    habitaciones = ${habitaciones}, wc = ${wc}, estacionamiento = ${estacionamiento}, vendedorId = ${vendedorId}
+                    WHERE id = ${id} ";
     
             // echo $query;
-
+            
     
             $resultado = mysqli_query($db, $query);
 
             if($resultado){
                 //Redireccionar al usuario
-                header("Location: /admin?resultado=1");
+                header("Location: /admin?resultado=2");
             }
         }
 
 
     }
 
-    require '../../includes/funciones.php';
     incluirTemplate('header');
 ?>
 
@@ -146,7 +164,7 @@
             </div>
         <?php endforeach; ?>
 
-        <form class="formulario" method="POST" action='/admin/propiedades/crear.php' enctype="multipart/form-data">
+        <form class="formulario" method="POST" enctype="multipart/form-data">
             <fieldset>
                 <legend>Información General</legend>
 
@@ -158,6 +176,8 @@
 
                 <label for="imagen">Imagen:</label>
                 <input type="file" id="imagen" accept="image/jpeg, image/png" name="imagen">
+                   
+                <img src="/imagenes/<?php echo $imagenPropiedad; ?>" class="imagen-small">
 
                 <label for="descripcion">Descripcion:</label>
                 <textarea id="descripcion" name="descripcion"><?php echo $descripcion; ?></textarea>
