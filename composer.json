@@ -1,0 +1,17 @@
+{
+    "name": "klenb/bienesraices",
+    "description": "Creando proyecto con POO",
+    "type": "project",
+    "authors": [
+        {
+            "name": "alan-martinez",
+            "email": "alan.martinez5691@alumnos.udg.mx"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "./classes"
+        }
+    }
+}

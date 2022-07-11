@@ -1,12 +1,10 @@
 <?php 
-    require '../../includes/funciones.php';
-    $auth = estaAutenticado();
-    if (!$auth){
-        header('Location: /');
-    }
+    require '../../includes/app.php';
 
-    //Base de datos
-    require '../../includes/config/database.php';
+    use App\Propiedad;
+
+    estaAutenticado();
+    
 
     $db = conectarDB();
 
@@ -44,6 +42,9 @@
         // var_dump($resultado);
         // exit;
 
+        $propiedad = new Propiedad($_POST);
+        $propiedad->guardar();
+
         
         $titulo =mysqli_real_escape_string( $db, $_POST['titulo']);
         $precio =mysqli_real_escape_string( $db, $_POST['precio']);
@@ -51,8 +52,8 @@
         $habitaciones =mysqli_real_escape_string( $db, $_POST['habitaciones']);
         $wc =mysqli_real_escape_string( $db, $_POST['wc']);
         $estacionamiento =mysqli_real_escape_string( $db, $_POST['estacionamiento']);
-        $creado = date('Y/m/d');
         $vendedorId =mysqli_real_escape_string( $db, $_POST['vendedor']);
+        $creado = date('Y/m/d');
 
         //Asignar files a una variable
         $imagen = $_FILES['imagen'];
@@ -110,10 +111,7 @@
             move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . $nombreImagen);
 
 
-            //Insertar en la base de datos
-            $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) 
-                    VALUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc' , '$estacionamiento', '$creado', '$vendedorId') ";
-    
+            
             // echo $query;
 
     
@@ -175,7 +173,7 @@
             <fieldset>
                 <legend>Vendedor</legend>
 
-                <select name="vendedor" id="vendedor">
+                <select name="vendedorId" id="vendedor">
                     <option value="">--Seleccione--</option>
                     <?php while ($vendedor = mysqli_fetch_assoc($resultado) ): ?>
                     
